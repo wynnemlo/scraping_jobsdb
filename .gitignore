@@ -2,3 +2,8 @@
 .env
 airflow_settings.yaml
 astro
+terraform/variables.tf
+terraform/terraform.tfstate
+terraform.tfstate.backup
+terraform/.terraform
+terraform/.terraform.lock.hcl
