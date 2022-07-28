@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+
+from airflow import DAG
 
 
 def create_dag(

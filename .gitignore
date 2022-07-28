@@ -1,7 +1,8 @@
 .git
-.env
-airflow_settings.yaml
-astro
+.astro
+airflow/.env
+airflow/airflow_settings.yaml
+airflow/.astro/
 terraform/variables.tf
 terraform/terraform.tfstate
 terraform.tfstate.backup
