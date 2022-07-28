@@ -12,9 +12,9 @@ resource "google_project_iam_member" "airflow-compute-iam" {
 
 resource "google_compute_instance" "airflow-machine" {
   name = "airflow-machine"
-  machine_type = "e2-medium"
+  machine_type = "e2-standard-2"
   zone = "us-west1-a"
-  tags = ["allow-ssh", "allow-internal", "allow-http"]
+  tags = ["allow-ssh", "allow-internal"]
 
   # startup script will install docker
   metadata = {
@@ -28,6 +28,7 @@ resource "google_compute_instance" "airflow-machine" {
   boot_disk {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-2004-lts"
+      size = 50
     }
   }
   
@@ -53,7 +54,7 @@ resource "google_compute_instance" "airflow-machine" {
       echo '    HostName ${google_compute_instance.airflow-machine.network_interface.0.access_config.0.nat_ip}' >> ${var.gce_ssh_config}
       echo '    User wynnemlo' >> ${var.gce_ssh_config}
       echo '    IdentityFile ${var.gce_ssh_private_key_file}' >> ${var.gce_ssh_config}
-      (Get-Content -path config) | Set-Content -Encoding UTF8 -Path config
+      (Get-Content -path ${var.gce_ssh_config}) | Set-Content -Encoding UTF8 -Path ${var.gce_ssh_config}
     EOT
     interpreter = ["PowerShell", "-Command"]
   }

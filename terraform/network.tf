@@ -28,18 +28,6 @@ resource "google_compute_firewall" "allow-internal" {
   source_ranges = ["${var.us-west1-cidr}"]
 }
 
-resource "google_compute_firewall" "allow-http" {
-  name          = "allow-http"
-  network       = google_compute_network.vpc-network.name
-  target_tags   = ["allow-http"]
-  source_ranges = ["0.0.0.0/0"]
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80"]
-  }
-}
-
 resource "google_compute_firewall" "allow-ssh" {
   name          = "allow-ssh"
   network       = google_compute_network.vpc-network.name
