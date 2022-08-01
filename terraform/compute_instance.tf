@@ -13,7 +13,7 @@ resource "google_project_iam_member" "airflow-compute-iam" {
 resource "google_compute_instance" "airflow-machine" {
   name = "airflow-machine"
   machine_type = "e2-standard-2"
-  zone = "us-west1-a"
+  zone = "${var.region}-a"
   tags = ["allow-ssh", "allow-internal"]
 
   # startup script will install docker
@@ -34,7 +34,7 @@ resource "google_compute_instance" "airflow-machine" {
   
   # use the vpc_network we just created
   network_interface {
-    subnetwork = google_compute_subnetwork.us-west1-subnet.id
+    subnetwork = google_compute_subnetwork.regional-subnet.id
 
     access_config {
 

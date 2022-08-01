@@ -1,3 +1,6 @@
 requests==2.28.1
 beautifulsoup4==4.11.1
 cloudscraper==1.2.60
+firebase-admin
+apache-airflow-providers-google==8.2.0
+apache-airflow-providers-postgres==5.1.0

@@ -14,6 +14,8 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+
+# install python and git
 sudo apt-get -y install python3-pip
 sudo apt-get -y install git-all
 
@@ -26,3 +28,14 @@ sudo usermod -aG docker $USER
 sudo usermod -aG docker ${var.gce_ssh_user}
 newgrp docker
 sudo su $USER
+
+# generate ssh key
+ssh-keygen -t ed25519 -N '' -C "${var.gce_ssh_user}@gmail.com" -f ~/.ssh/id_ed25519 <<< y
+
+# add ssh-key to ssh-agent
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+# manual steps to add ssh-key public file to github:
+# gh auth login
+# gh ssh-key add ~/.ssh/id_ed25519.pub

@@ -1,0 +1,28 @@
+networks:
+  pg-network:
+    external: true
+
+services:
+  pgdatabase:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=${APP_DB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${APP_DB_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${APP_DB_POSTGRES_DB}
+    volumes:
+      - "./app_db_postgres_data:/var/lib/postgresql/data:rw"
+      - "C:/Users/admin/Developer/scraping_jobsdb/airflow/data:/home/data:rw"
+    ports:
+      - 5056:5432
+    networks:
+      - pg-network
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${APP_DB_PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${APP_DB_PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8082:80"
+    networks:
+      - pg-network
+

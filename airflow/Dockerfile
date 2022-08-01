@@ -1,1 +1,3 @@
 FROM quay.io/astronomer/ap-airflow:2.3.3-onbuild
+ENV AIRFLOW__CORE__PARALLELISM=1
+ENV AIRFLOW__CORE__DAG_CONCURRENCY=1

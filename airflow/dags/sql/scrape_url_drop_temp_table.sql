@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS raw.{{ params.keyword}}_{{ params.salary_min }}_{{ params.salary_max }}_raw;

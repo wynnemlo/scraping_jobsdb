@@ -3,8 +3,13 @@
 airflow/.env
 airflow/airflow_settings.yaml
 airflow/.astro/
+airflow/airflow.cfg
+airflow/data
+airflow/webserver_config.py
 terraform/variables.tf
 terraform/terraform.tfstate
 terraform.tfstate.backup
 terraform/.terraform
 terraform/.terraform.lock.hcl
+app_db/.env
+app_db/app_db_postgres_data

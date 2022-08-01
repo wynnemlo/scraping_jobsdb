@@ -4,10 +4,10 @@ resource "google_compute_network" "vpc-network" {
   routing_mode = "REGIONAL"
 }
 
-resource "google_compute_subnetwork" "us-west1-subnet" {
-  name = "us-west1-subnet"
-  ip_cidr_range = var.us-west1-cidr
-  region = "us-west1"
+resource "google_compute_subnetwork" "regional-subnet" {
+  name = "asia-east2-subnet"
+  ip_cidr_range = var.subnet-cidr
+  region = var.region
   network = google_compute_network.vpc-network.id
 }
 
@@ -25,7 +25,7 @@ resource "google_compute_firewall" "allow-internal" {
     protocol = "udp"
     ports = ["0-65535"]
   }
-  source_ranges = ["${var.us-west1-cidr}"]
+  source_ranges = ["${var.subnet-cidr}"]
 }
 
 resource "google_compute_firewall" "allow-ssh" {
