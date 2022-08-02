@@ -1,4 +1,10 @@
+import os
+import random
+import time
 from datetime import datetime
+
+import cloudscraper
+from bs4 import BeautifulSoup
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
@@ -6,40 +12,45 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.providers.postgres.operators.postgres import PostgresHook, PostgresOperator
 
 RAW_DATA_DIR = "/usr/local/airflow/data/staging"
+DATA_LAKE_DIR = "./data_lake"
+JOBSDB_URL_PREFIX = "https://hk.jobsdb.com"
 SALARY_LIST = [
     (11000, 15000),
-    #    (15000, 20000),
-    #    (20000, 30000),
-    #    (30000, 40000),
-    #    (40000, 50000),
-    #    (50000, 60000),
-    #    (60000, 80000),
+    (15000, 20000),
+    (20000, 30000),
+    (30000, 40000),
+    (40000, 50000),
+    (50000, 60000),
+    (60000, 80000),
     (80000, 120000),
 ]
 KEYWORD_LIST = [
     "data_analyst",
-    # "data_scientist",
-    # "analytics_manager",
-    # "data_engineer",
-    # "data_governance",
-    # "data_steward",
-    # "data_management",
-    # "machine_learning",
+    "data_scientist",
+    "analytics_manager",
+    "data_engineer",
+    "data_governance",
+    "data_steward",
+    "data_management",
+    "machine_learning",
 ]
 
 
-def get_request(keyword, salary_min, salary_max, page_num) -> str:
-    import cloudscraper
-
+def get_request_with_keyword(keyword, salary_min, salary_max, page_num) -> str:
     scraper = cloudscraper.create_scraper()
-    url = f"https://hk.jobsdb.com/hk/search-jobs/{keyword.replace('_', '-')}/{page_num}?SalaryF={salary_min}&SalaryT={salary_max}&SalaryType=1"
+    url = f"{JOBSDB_URL_PREFIX}/hk/search-jobs/{keyword.replace('_', '-')}/{page_num}?SalaryF={salary_min}&SalaryT={salary_max}&SalaryType=1"
     print("url: ", url)
     return scraper.get(url)
 
 
-def get_csv_filename(keyword, salary_min, salary_max, date) -> str:
-    import os
+def get_request_with_url(url: str) -> str:
+    scraper = cloudscraper.create_scraper()
+    url = f"{JOBSDB_URL_PREFIX}/{url}"
+    print("url: ", url)
+    return scraper.get(url)
 
+
+def get_csv_filename(keyword: str, salary_min: str, salary_max: str, date: str) -> str:
     filename = f"{RAW_DATA_DIR}/{keyword}_{salary_min}_{salary_max}_{date}.csv"
     dirname = os.path.dirname(filename)
     if not os.path.exists(dirname):
@@ -47,22 +58,33 @@ def get_csv_filename(keyword, salary_min, salary_max, date) -> str:
     return filename
 
 
-def scrape_all_pages(keyword, salary_min, salary_max, date, num_of_pages) -> str:
-    import re
+def get_data_lake_filename(job_id: str, url: str, date: str) -> str:
+    filename = f"{DATA_LAKE_DIR}/{date[0:4]}/{date[4:6]}/{date[6:8]}/{job_id}.html"
+    dirname = os.path.dirname(filename)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+    return filename
 
-    from bs4 import BeautifulSoup
+
+def sleep_for_random_seconds():
+    time.sleep(random.randint(20, 60))
+
+
+def scrape_all_pages(
+    keyword: str, salary_min: str, salary_max: str, date: str, num_of_pages: int
+) -> str:
+    import re
 
     # create file to store data
     csv_file = get_csv_filename(keyword, salary_min, salary_max, date)
 
     # loop through all pages and add each page's data to csv file
     with open(csv_file, "w") as fp:
-        for n in range(1, 3):
-            # for n in range(1, num_of_pages):
-            print("Sleep for 10...")
-            # time.sleep(10)
+        for n in range(1, num_of_pages):
+            print("Sleep...")
+            sleep_for_random_seconds()
 
-            req = get_request(keyword, salary_min, salary_max, n)
+            req = get_request_with_keyword(keyword, salary_min, salary_max, n)
             bs = BeautifulSoup(req.text, "html.parser")
             job_list_container = bs.find("div", {"id": "jobList"})
 
@@ -88,11 +110,9 @@ def _scrape(keyword: str, salary_min: str, salary_max: str, **kwargs):
     import json
     import re
 
-    from bs4 import BeautifulSoup
-
     # get first page and get number of pages
     # access left container
-    req = get_request(keyword, salary_min, salary_max, 1)
+    req = get_request_with_keyword(keyword, salary_min, salary_max, 1)
     bs = BeautifulSoup(req.text, "html.parser")
     job_list_container = bs.find("div", {"id": "jobList"})
 
@@ -127,6 +147,40 @@ def _copy_data_from_csv(keyword: str, salary_min: str, salary_max: str, **kwargs
             sep=",",
         )
     conn.commit()
+
+
+def _do_scrape(**kwargs):
+    postgres_hook = PostgresHook(postgres_conn_id="app_db")
+    conn = postgres_hook.get_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT job_id, url FROM raw.scraped_job WHERE file_path IS NULL;")
+    jobs_to_scrape = cur.fetchall()
+    if not jobs_to_scrape:
+        raise Exception("No data")
+
+    for job in jobs_to_scrape:
+        job_id = job[0]
+        url = job[1]
+        html = get_request_with_url(url).text
+
+        # validate returned html is valid
+        bs = BeautifulSoup(html, "html.parser")
+        job_title = bs.find("div", {"data-automation": "detailsTitle"}).h1.get_text()
+        if job_title == None:
+            raise Exception("Scraper returning unexpected HTML")
+
+        filename = get_data_lake_filename(job_id, url, kwargs["ds_nodash"])
+        print(filename)
+
+        with open(filename, "w") as file:
+            file.write(html)
+
+        cur.execute(
+            f"UPDATE raw.scraped_job SET scraped_date = current_date, file_path = '{filename}' WHERE job_id = '{job_id}';"
+        )
+        conn.commit()
+
+        sleep_for_random_seconds
 
 
 with DAG(
@@ -217,6 +271,19 @@ with DAG(
                 >> dedupe_jobs
             )
 
-    # after dedupe jobs, get request to scrape each url and fill in details
+    # after dedupe jobs, scrape each url and store it into data lake
+    # create table called "scraped_jobs" that serves as directory to data lake
+    # copy over all records that don't yet exist in the scraped_jobs table
+    create_scraped_jobs_table = PostgresOperator(
+        task_id="create_scraped_jobs_table",
+        postgres_conn_id="app_db",
+        sql="scrape_url_create_scraped_job_table.sql",
+    )
+
+    do_scrape = PythonOperator(
+        task_id="do_scrape",
+        python_callable=_do_scrape,
+    )
 
     start >> create_table
+    dedupe_jobs >> create_scraped_jobs_table >> do_scrape

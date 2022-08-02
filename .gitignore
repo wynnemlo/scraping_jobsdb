@@ -5,6 +5,7 @@ airflow/airflow_settings.yaml
 airflow/.astro/
 airflow/airflow.cfg
 airflow/data
+airflow/data_lake
 airflow/webserver_config.py
 terraform/variables.tf
 terraform/terraform.tfstate
