@@ -11,7 +11,6 @@ services:
       - POSTGRES_DB=${APP_DB_POSTGRES_DB}
     volumes:
       - "./app_db_postgres_data:/var/lib/postgresql/data:rw"
-      - "C:/Users/admin/Developer/scraping_jobsdb/airflow/data:/home/data:rw"
     ports:
       - 5056:5432
     networks:
