@@ -126,8 +126,6 @@ def parse_job_html(file_path, scraped_date) -> ArrayType(StringType()):
 
 
 def get_spark_app_config() -> SparkConf:
-    print("get config")
-
     cwd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     conf_path = os.path.join(cwd, "spark.conf")
 

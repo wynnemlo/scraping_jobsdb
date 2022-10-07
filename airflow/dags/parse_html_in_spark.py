@@ -2,6 +2,7 @@ import os
 from datetime import date, datetime, timedelta
 
 from airflow import DAG
+from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import BranchPythonOperator, PythonOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
@@ -22,6 +23,7 @@ with DAG(
         application="/spark_code/ParseHtml.py",
         conn_id="spark_local",
         jars="/spark_code/postgresql-42.4.1.jar",
+        py_files="/spark_code/dist/ParseHtml-0.1-py3.10.egg",
         application_args=[
             Variable.get("POSTGRES_USERNAME"),
             Variable.get("POSTGRES_PASSWORD"),
