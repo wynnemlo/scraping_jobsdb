@@ -14,8 +14,16 @@ with DAG(
     template_searchpath="./dags/sql",
 ) as dag:
 
+    create_salary_table = PostgresOperator(
+        task_id="create_salary_table",
+        postgres_conn_id="app_db",
+        sql="impute_salary_create_salary_table.sql",
+    )
+
     update_salary_fields = PostgresOperator(
         task_id="update_salary_fields",
         postgres_conn_id="app_db",
-        sql="impute_salary.sql",
+        sql="impute_salary_update_parsed_jobs_table.sql",
     )
+
+    create_salary_table >> update_salary_fields
