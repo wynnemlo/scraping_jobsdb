@@ -1,11 +1,14 @@
 .git
 .astro
+__pycache__/
+.idea/
 airflow/.env
 airflow/airflow_settings.yaml
 airflow/.astro/
 airflow/airflow.cfg
 airflow/data
 airflow/data_lake
+airflow/postgres_data
 airflow/webserver_config.py
 terraform/variables.tf
 terraform/terraform.tfstate
@@ -14,3 +17,7 @@ terraform/.terraform
 terraform/.terraform.lock.hcl
 app_db/.env
 app_db/app_db_postgres_data
+spark/build
+spark/dist
+spark/postgresql-42.4.1.jar
+spark/ParseHtml.egg-info/
