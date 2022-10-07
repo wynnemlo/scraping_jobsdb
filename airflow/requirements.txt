@@ -4,3 +4,7 @@ cloudscraper==1.2.60
 firebase-admin
 apache-airflow-providers-google==8.2.0
 apache-airflow-providers-postgres==5.1.0
+apache-airflow-providers-apache-spark
+pytest
+apache-airflow-providers-common-sql
+pyspark

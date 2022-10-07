@@ -10,10 +10,15 @@ services:
       - pg-network
     volumes:
       - ".:/usr/local/airflow:rw"
+      - "/C/jdk:/host_java:rw"
+      - "/C/spark-3.3.0-bin-hadoop2:/host_spark:rw"
+      - "/C/Users/admin/Developer/scraping_jobsdb/spark:/spark_code:rw"
   
   postgres:
     networks:
       - pg-network
+    volumes:
+      - "./postgres_data:/var/lib/postgresql/data:rw"
   
   webserver:
     networks:

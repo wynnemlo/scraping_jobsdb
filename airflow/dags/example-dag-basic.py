@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timedelta
 
 from airflow.decorators import (  # DAG and task decorators for interfacing with the TaskFlow API
@@ -40,6 +41,9 @@ def example_dag_basic():
         pipeline. In this case, getting data is simulated by reading from a
         hardcoded JSON string.
         """
+
+        print("ENVIRONMENT VARIABLE")
+        print(os.environ.get("RAW_DATA_DIR"))
         data_string = '{"1001": 301.27, "1002": 433.21, "1003": 502.22}'
 
         order_data_dict = json.loads(data_string)
