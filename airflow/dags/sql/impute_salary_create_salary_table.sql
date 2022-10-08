@@ -5,5 +5,3 @@ SELECT
 	max(salary_max) as max_salary
 FROM raw.raw_scraped_url
 GROUP BY job_id;
-
-CREATE INDEX on "staging".imputed_salary (job_id);
