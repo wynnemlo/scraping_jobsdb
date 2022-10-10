@@ -1,6 +1,7 @@
 .git
 .astro
 __pycache__/
+.ipynb_checkpoints/
 .idea/
 airflow/.env
 airflow/airflow_settings.yaml
