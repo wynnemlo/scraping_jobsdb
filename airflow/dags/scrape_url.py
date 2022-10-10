@@ -427,7 +427,7 @@ with DAG(
         table="raw.scraped_job",
         column_mapping={
             "job_id": {"unique_check": {"equal_to": 0}},
-            "date": {
+            "scraped_date": {
                 "min": {"greater_than": date(2022, 7, 1)},
                 "max": {"less_than": date(2022, 12, 1)},
             },
