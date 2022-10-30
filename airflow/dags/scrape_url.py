@@ -128,7 +128,7 @@ def _sleep_for_random_seconds():
 
 
 def _scrape(keyword: str, salary_min: str, salary_max: str, **kwargs) -> str:
-    """Runs a search on JobsDB with the given parameters. It will find out the total number of jobs returned and save each job's URL path and its job_id to a CSV file.
+    """Runs a search on JobsDB with the given parameters. It will save each job's URL path and its job_id to a CSV file.
 
     Args:
         keyword (str): Search keyword used

@@ -14,6 +14,7 @@ with DAG(
     start_date=datetime(2022, 8, 1),
     catchup=False,
     default_args={"retries": 6, "retry_delay": timedelta(minutes=5)},
+    template_searchpath="./dags/sql",
     tags=["parse"],
 ) as dag:
 

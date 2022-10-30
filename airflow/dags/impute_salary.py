@@ -7,7 +7,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 with DAG(
     dag_id="impute_salary",
-    schedule_interval="@weekly",
+    schedule_interval="@daily",
     start_date=datetime(2022, 8, 1),
     catchup=False,
     default_args={"retries": 6, "retry_delay": timedelta(minutes=5)},

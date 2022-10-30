@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS "staging".imputed_salary AS
+DROP TABLE IF EXISTS "staging".imputed_salary;
+
+CREATE TABLE "staging".imputed_salary AS
 SELECT 
 	job_id, 
 	min(salary_min) as min_salary,
