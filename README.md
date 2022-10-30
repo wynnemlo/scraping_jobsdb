@@ -118,4 +118,4 @@ Export the big table in Postgres to a CSV. In this case, I’ve exported it for 
 
 # Data Analysis
 
-Data analysis is not the focus of this project, but some interesting insights were found. We used Kmeans to cluster the jobs into groups, TF-IDF for extracting features from text, and used regression to try to build a prediction model. Please check this Jupyter notebook for details.
+Data analysis is not the focus of this project, but some interesting insights were found. We used Kmeans to cluster the jobs into groups, TF-IDF for extracting features from text, and used GradientBoost to try to build a prediction model. Please check this [Kaggle notebook](https://www.kaggle.com/code/wynnelo/hong-kong-data-jobs-2022-analysis) for details.
