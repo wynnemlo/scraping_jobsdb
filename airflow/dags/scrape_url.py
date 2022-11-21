@@ -51,7 +51,7 @@ def _make_get_request_with_keyword(
     import cloudscraper
 
     scraper = cloudscraper.create_scraper()
-    url = f"{JOBSDB_URL_PREFIX}/hk/search-jobs/{keyword.replace('_', '-')}/{page_num}?SalaryF={salary_min}&SalaryT={salary_max}&SalaryType=1&createdAt=7d"
+    url = f"{JOBSDB_URL_PREFIX}/hk/search-jobs/{keyword.replace('_', '-')}/{page_num}?SalaryF={salary_min}&SalaryT={salary_max}&SalaryType=1&createdAt=30d"
     print("url: ", url)
 
     response = scraper.get(url)
