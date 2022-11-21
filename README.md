@@ -37,8 +37,8 @@ If the job shows up under the search results for the salary range, that means th
     - We have used Astronomer CLI in this project to save on the setup on Airflow
     - Idempotency! Every DAG and task was written with idempotency in mind, assuming that there will be errors.
     - Not letting errors go silent! When we encounter an error, it is super important for it to throw an exception instead of failing silently. We also make use of sanity tests with SQL to create extra layers of error-checking.
-- ELT
-    - We use an ELT structure here, which means storing all the raw data in a data lake first. That means all we do is scrape JobsDB, and save the HTML file in our disk or cloud storage.
+- Data lake
+    - We store all the raw data in a data lake first. That means all we do is scrape JobsDB, and save the HTML file in our disk or cloud storage.
     - However, as we can see above, it would also be important to save the metadata of each scrape we do so we are able to match each record to a salary range. All of that metadata is saved in a Postgres database.
 - Data transformation
     - After we’ve collected a bunch of HTML files in our data lake, we use Spark to parse and extract the important fields from the HTML files, e.g. the job title, the job type, the career level of the job
