@@ -22,3 +22,4 @@ spark/build
 spark/dist
 spark/postgresql-42.4.1.jar
 spark/ParseHtml.egg-info/
+notebook/
